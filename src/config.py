@@ -9,16 +9,19 @@ load_dotenv(ROOT / ".env")
 with open(ROOT / "config.yaml", "r", encoding="utf-8") as f:
     CFG = yaml.safe_load(f)
 
-# secrets from environment (GitHub Secrets in CI, .env locally)
+def _env(k: str) -> str:
+    # .strip() kills stray newlines/spaces pasted into GitHub Secrets
+    return (os.getenv(k) or "").strip()
+
 SECRETS = {
-    "GEMINI_API_KEY":        os.getenv("GEMINI_API_KEY", ""),
-    "PEXELS_API_KEY":        os.getenv("PEXELS_API_KEY", ""),
-    "PIXABAY_API_KEY":       os.getenv("PIXABAY_API_KEY", ""),
-    "YOUTUBE_CLIENT_ID":     os.getenv("YOUTUBE_CLIENT_ID", ""),
-    "YOUTUBE_CLIENT_SECRET": os.getenv("YOUTUBE_CLIENT_SECRET", ""),
-    "YOUTUBE_REFRESH_TOKEN": os.getenv("YOUTUBE_REFRESH_TOKEN", ""),
-    "IG_USERNAME":           os.getenv("IG_USERNAME", ""),
-    "IG_PASSWORD":           os.getenv("IG_PASSWORD", ""),
+    "GEMINI_API_KEY":        _env("GEMINI_API_KEY"),
+    "PEXELS_API_KEY":        _env("PEXELS_API_KEY"),
+    "PIXABAY_API_KEY":       _env("PIXABAY_API_KEY"),
+    "YOUTUBE_CLIENT_ID":     _env("YOUTUBE_CLIENT_ID"),
+    "YOUTUBE_CLIENT_SECRET": _env("YOUTUBE_CLIENT_SECRET"),
+    "YOUTUBE_REFRESH_TOKEN": _env("YOUTUBE_REFRESH_TOKEN"),
+    "IG_USERNAME":           _env("IG_USERNAME"),
+    "IG_PASSWORD":           _env("IG_PASSWORD"),
 }
 
 def path(key: str) -> Path:
