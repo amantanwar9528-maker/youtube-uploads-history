@@ -17,3 +17,8 @@ __pycache__/
 
 # allow background music to reach the cloud
 !assets/music/*.mp3
+
+# reels queued for Instagram (must reach your PC)
+!reels_to_post/
+!reels_to_post/*.mp4
+!reels_to_post/*.txt

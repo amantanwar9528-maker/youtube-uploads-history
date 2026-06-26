@@ -53,3 +53,38 @@ Ye tumhare PC se chalega, tumhare ID-password se. Iski tension abhi mat lo.
 👉 ABHI SIRF ITNA KARO: Upar wala **HISSA 1** (Python + Git install).
 Ho jaye to mujhe likho "ho gaya" — main turant HISSA 2 karwa dunga.
 ============================================================
+
+============================================================
+## HISSA 5 — Instagram Reels (tumhare PC se chalega)
+============================================================
+Cloud har video ke baad ek 1-min ad-reel bana ke `reels_to_post/` folder
+mein daal deta hai (hook + "YouTube par poori kahani" + Subscribe end-card).
+Tumhare PC par ek script use Instagram par post karta hai. PC par sirf
+`instagrapi` chahiye — ffmpeg/video editing PC par NAHI chahiye.
+
+-- EK BAAR ka setup --
+1) Sabhi naya code GitHub par bhejo: GitHub Desktop -> Commit -> Push.
+2) PC par command window (cmd) kholo project folder mein aur likho:
+       pip install instagrapi PyYAML python-dotenv
+3) Project folder mein `.env.example` ki copy banao, naam `.env` rakho.
+   Usme sirf 2 lines bharo:
+       IG_USERNAME=tumhara_instagram_username
+       IG_PASSWORD=tumhara_instagram_password
+   (Agar Instagram par 2-step verification ON hai to login ke waqt code maangega.)
+
+-- HAR BAAR (ya schedule par) --
+4) GitHub Desktop mein "Fetch origin" / "Pull" dabao — naye reels tumhare PC
+   ke `reels_to_post/` folder mein aa jayenge.
+5) cmd mein likho:
+       python src/run_local_instagram.py
+   - Jo naye reels hain wo Instagram par post ho jayenge.
+   - Jo post ho chuke unhe wo yaad rakhta hai (dobara post nahi karega).
+   - Pehli baar login par OTP/challenge aa sakta hai — code daal dena, phir
+     session save ho jata hai (aage nahi poochhega).
+
+-- Auto banane ke liye (optional) --
+Windows "Task Scheduler" mein `python src/run_local_instagram.py` ko
+roz 2-3 baar set kar do (jaise 8AM, 2PM, 7PM). Bas PC us waqt ON ho.
+
+NOTE: Instagram automation thodi sensitive hai. Roz 3 reels theek hai;
+isse zyada burst mat karna warna account flag ho sakta hai.

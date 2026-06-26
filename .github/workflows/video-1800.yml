@@ -2,9 +2,9 @@ name: Auto Video 1800 IST
 on:
   schedule:
     - cron: '30 12 * * *'   # 1800 IST daily
-  workflow_dispatch: {}            # manual run button
+  workflow_dispatch: {}
 concurrency:
-  group: video-pipeline           # never run two renders at once
+  group: video-pipeline
   cancel-in-progress: false
 jobs:
   build-and-upload:
@@ -14,8 +14,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto
+      - name: Install ffmpeg + Hindi fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-core fonts-indic
+      - name: Get Hindi (Devanagari) font for thumbnails/reels
+        run: |
+          mkdir -p assets/fonts
+          curl -fsSL -o assets/fonts/NotoSansDevanagari-Bold.ttf \
+            https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Bold.ttf || echo "font dl skipped"
       - name: Install deps
         run: pip install -r requirements.txt
       - name: Run pipeline
@@ -27,10 +34,11 @@ jobs:
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         run: python src/orchestrator.py
-      - name: Commit topic ledger
+      - name: Commit ledger + queued reels
         run: |
           git config user.name "itihaas-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/used_topics.json data/topic_pool.json || true
-          git commit -m "ledger: $(date -u +%F-%T)" || echo "nothing to commit"
+          find reels_to_post -type f -mtime +7 -delete 2>/dev/null || true
+          git add data/used_topics.json data/topic_pool.json reels_to_post || true
+          git commit -m "run: $(date -u +%F-%T)" || echo "nothing to commit"
           git push || echo "push skipped"

@@ -1,13 +1,23 @@
 """End-to-end pipeline for ONE video. Designed for hands-off runs (cron / CI).
-   topic -> research -> script -> voice -> media -> edit -> thumbnail -> upload."""
-import json, sys, traceback
+   topic -> research -> script -> voice -> media -> edit -> thumbnail -> upload
+   -> ad-reel saved to reels_to_post/ (local PC posts it to Instagram)."""
+import json, sys, shutil, traceback
 from datetime import datetime
 from pathlib import Path
-from config import CFG, path
-from utils import get_logger, slugify
+from config import CFG, ROOT, path
+from utils import get_logger
 import topic_picker, researcher, scriptwriter, voiceover, media_fetcher, music, editor, subtitles, thumbnail, youtube_uploader, reels_maker
 
 log = get_logger("run")
+
+def _ig_caption(script, channel, vid):
+    hook = script.get("reel_hook") or script.get("yt_title", "")
+    return (
+        f"{hook}\n\n"
+        f"Poori kahani (full video) YouTube par dekhein! Link bio mein.\n"
+        f"▶ {channel} ko abhi Subscribe karein.\n\n"
+        f"#history #itihaas #historyinhindi #truestory #facts #reels #explore #bharat"
+    )
 
 def run_once(post_instagram=False):
     topic = topic_picker.next_topic()
@@ -31,7 +41,7 @@ def run_once(post_instagram=False):
     srt = None
     if CFG["video"]["captions"]:
         try:
-            srt = subtitles.make_srt(audio, workdir)   # non-fatal: never block upload
+            srt = subtitles.make_srt(audio, workdir)   # non-fatal
         except Exception as e:
             log.warning("captions skipped (non-fatal): %s", e)
 
@@ -50,11 +60,17 @@ def run_once(post_instagram=False):
         CFG["channel"]["default_tags"], thumb)
     topic_picker.mark_used(topic, vid)
 
-    # build reel for later local posting (saved next to outputs)
+    # ---- ad-reel -> reels_to_post/ (PC posts to Instagram later) ----
     if CFG["reels"]["enabled"]:
         try:
             reel = reels_maker.make(final, script.get("reel_hook", topic["title"]), workdir)
-            if post_instagram:
+            outbox = ROOT / "reels_to_post"; outbox.mkdir(exist_ok=True)
+            name = f"{workdir.name}_{vid}"
+            shutil.copy(reel, outbox / f"{name}.mp4")
+            (outbox / f"{name}.txt").write_text(
+                _ig_caption(script, CFG["channel"]["name"], vid), encoding="utf-8")
+            log.info("reel queued for Instagram: %s.mp4", name)
+            if post_instagram:                      # only when run locally with --ig
                 import instagram_poster
                 instagram_poster.post_reel(reel, script.get("reel_hook", ""), f"https://youtu.be/{vid}")
         except Exception as e:
