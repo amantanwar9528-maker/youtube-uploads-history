@@ -1,6 +1,5 @@
 """Turn the research brief into a ~35-45 min Hindi narration script with scene cues,
-plus YouTube meta, a realistic English image prompt, and a catchy HINGLISH
-thumbnail heading (Roman script) for the thumbnail."""
+plus YouTube meta, a realistic English image prompt, and an ENGLISH thumbnail heading."""
 import json, re
 from config import CFG
 from utils import get_logger
@@ -46,7 +45,7 @@ def _meta(topic_title, opening):
 Sirf JSON do (no extra text):
 {{"yt_title": "<60 char clickable Hindi title>",
 "yt_description": "<150-word Hindi description with 5 hashtags>",
-"thumbnail_heading": "<2 to 5 word CATCHY thumbnail heading in HINGLISH (Roman/English letters ONLY, NO Devanagari). e.g. 'Jallianwala Bagh', 'Titanic Ka Sach'>",
+"thumbnail_heading": "<2 to 5 word CATCHY thumbnail heading in ENGLISH ONLY (translate topic to English), e.g. 'Jallianwala Bagh Massacre', 'The Sinking of Titanic', 'Fall of Berlin Wall'>",
 "reel_hook": "<one-line Hindi hook for Instagram reel>",
 "thumbnail_prompt": "<short ENGLISH visual scene description of this historical topic for a photorealistic AI image; describe place/people/era/mood; NO text/words in the image>"}}"""
     try:
