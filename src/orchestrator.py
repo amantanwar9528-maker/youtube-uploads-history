@@ -1,5 +1,5 @@
 """End-to-end pipeline for ONE video. Designed for hands-off runs (cron / CI).
-   topic -> research -> script -> voice -> media -> edit -> Ghibli thumbnail
+   topic -> research -> script -> voice -> media -> edit -> realistic thumbnail
    -> upload -> ad-reel saved to reels_to_post/ (local PC posts to Instagram)."""
 import json, sys, shutil, traceback
 from datetime import datetime
@@ -47,10 +47,10 @@ def run_once(post_instagram=False):
 
     final = editor.build(assets, audio, track, srt, workdir)
 
-    # ---- Ghibli-style AI thumbnail + topic heading ----
+    # ---- realistic AI thumbnail + HINGLISH heading ----
     thumb = None
     try:
-        heading = topic["title"].split("—")[0].split(":")[0].strip() or topic["title"]
+        heading = script.get("thumbnail_heading") or topic["title"].split("—")[0].split(":")[0].strip()
         ai_prompt = script.get("thumbnail_prompt") or topic["title"]
         fallback_bg = next((a["path"] for a in assets if a["type"] == "image"), None)
         thumb = thumbnail.make(heading, ai_prompt, workdir, fallback_bg)
