@@ -1,6 +1,6 @@
 """End-to-end pipeline for ONE video. Designed for hands-off runs (cron / CI).
-   topic -> research -> script -> voice -> media -> edit -> thumbnail -> upload
-   -> ad-reel saved to reels_to_post/ (local PC posts it to Instagram)."""
+   topic -> research -> script -> voice -> media -> edit -> Ghibli thumbnail
+   -> upload -> ad-reel saved to reels_to_post/ (local PC posts to Instagram)."""
 import json, sys, shutil, traceback
 from datetime import datetime
 from pathlib import Path
@@ -47,11 +47,13 @@ def run_once(post_instagram=False):
 
     final = editor.build(assets, audio, track, srt, workdir)
 
+    # ---- Ghibli-style AI thumbnail + topic heading ----
     thumb = None
     try:
-        thumb_bg = next((a["path"] for a in assets if a["type"] == "image"), None)
-        if thumb_bg:
-            thumb = thumbnail.make(thumb_bg, script.get("thumbnail_text", topic["title"]), workdir)
+        heading = topic["title"].split("—")[0].split(":")[0].strip() or topic["title"]
+        ai_prompt = script.get("thumbnail_prompt") or topic["title"]
+        fallback_bg = next((a["path"] for a in assets if a["type"] == "image"), None)
+        thumb = thumbnail.make(heading, ai_prompt, workdir, fallback_bg)
     except Exception as e:
         log.warning("thumbnail skipped (non-fatal): %s", e)
 
@@ -70,7 +72,7 @@ def run_once(post_instagram=False):
             (outbox / f"{name}.txt").write_text(
                 _ig_caption(script, CFG["channel"]["name"], vid), encoding="utf-8")
             log.info("reel queued for Instagram: %s.mp4", name)
-            if post_instagram:                      # only when run locally with --ig
+            if post_instagram:
                 import instagram_poster
                 instagram_poster.post_reel(reel, script.get("reel_hook", ""), f"https://youtu.be/{vid}")
         except Exception as e:

@@ -1,4 +1,5 @@
-"""Turn the research brief into a ~35-45 min Hindi narration script with scene cues."""
+"""Turn the research brief into a ~35-45 min Hindi narration script with scene cues,
+plus YouTube meta + a Ghibli-style English image prompt for the thumbnail."""
 import json, re
 from config import CFG
 from utils import get_logger
@@ -6,7 +7,6 @@ import gemini_client
 
 log = get_logger("script")
 
-# ~150 Hindi words/min spoken -> target word count
 def _target_words():
     return int(CFG["video"]["target_minutes"] * 150)
 
@@ -31,27 +31,28 @@ Rules:
 """
     text = gemini_client.ask(prompt, temperature=0.8)
 
-    # extract scene cues in order
     scenes = []
     for m in SCENE_RE.finditer(text):
         kw = m.group(1).replace("scene:", "").strip()
         scenes.append(kw)
     narration = SCENE_RE.sub("", text).strip()
 
-    # also get a punchy title + description + thumbnail line from Gemini
     meta = _meta(research["title"], narration[:1500])
     return {"narration": narration, "scenes": scenes, **meta}
 
 def _meta(topic_title, opening):
     prompt = f"""Topic: {topic_title}. Opening: {opening}
-JSON do: {{"yt_title": "<60 char clickable Hindi title>",
+Sirf JSON do (no extra text):
+{{"yt_title": "<60 char clickable Hindi title>",
 "yt_description": "<150-word Hindi description with 5 hashtags>",
 "thumbnail_text": "<3-4 word punchy Hindi hook>",
-"reel_hook": "<one-line Hindi hook for Instagram reel>"}}"""
+"reel_hook": "<one-line Hindi hook for Instagram reel>",
+"thumbnail_prompt": "<short ENGLISH visual scene description of this historical topic for an AI image generator; describe the place/people/mood; NO text/words in the image>"}}"""
     try:
         raw = gemini_client.ask(prompt, temperature=0.7)
         return json.loads(re.search(r"\{.*\}", raw, re.S).group(0))
     except Exception as e:
         log.warning("meta gen failed: %s", e)
         return {"yt_title": topic_title, "yt_description": topic_title,
-                "thumbnail_text": topic_title[:20], "reel_hook": topic_title}
+                "thumbnail_text": topic_title[:20], "reel_hook": topic_title,
+                "thumbnail_prompt": topic_title}
