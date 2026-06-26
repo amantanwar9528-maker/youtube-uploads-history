@@ -88,3 +88,27 @@ roz 2-3 baar set kar do (jaise 8AM, 2PM, 7PM). Bas PC us waqt ON ho.
 
 NOTE: Instagram automation thodi sensitive hai. Roz 3 reels theek hai;
 isse zyada burst mat karna warna account flag ho sakta hai.
+
+============================================================
+## HISSA 6 — Sab kuch kitna automatic hai? + Instagram ko bhi auto karo
+============================================================
+YouTube videos:  100% AUTOMATIC. Roz 7AM/1PM/6PM par khud banti aur upload
+                 hoti hain. Tumhe Actions ya kuch bhi kholne ki zaroorat NAHI.
+
+Instagram reel:  Reel khud ban jata hai. Post karne ke liye PC chahiye.
+                 Ise bhi auto karne ke liye (PC ON hona chahiye):
+
+  1) Project folder me `post_reels.bat` file hai (already bani hui).
+  2) Windows search -> "Task Scheduler" kholo.
+  3) Right side -> "Create Basic Task".
+  4) Naam: "Instagram Reels" -> Next.
+  5) "Daily" chuno -> Next -> time set karo (jaise 8:00 AM) -> Next.
+  6) "Start a program" -> Next -> Browse karke `post_reels.bat` chuno -> Next -> Finish.
+  7) (Optional) Din me 3 baar chahiye to aise hi 2 aur task bana lo
+     (jaise 2 PM aur 7 PM), thodi der baad video banne ke.
+
+Bas. Ab agar us waqt PC ON hua, to reel khud Instagram par chala jayega.
+Pehli baar login par OTP aa sakta hai -> ek baar daal do, phir save ho jata hai.
+
+NOTE: Agar PC us waqt OFF ho, to bs jab next baar `post_reels.bat` chalega
+(ya tum manually chalaoge) tab pending reels ek saath post ho jayenge.
