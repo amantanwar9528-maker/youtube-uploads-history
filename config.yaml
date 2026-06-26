@@ -1,38 +1,35 @@
-# ================= Itihaas Auto-Bot config =================
-# >>> TEST MODE ON: chhota video, captions off, unlisted upload.
-# >>> Baad me wapas karna: target_minutes 40, captions true, privacy public.
+# ================= Itihaas Auto-Bot config (PRODUCTION) =================
 channel:
   name: "Itihaas Ki Kahaniyan"        # change to your channel name
   language: "hi"                       # Hindi narration
   default_tags: ["history","itihaas","true story","history in hindi","documentary"]
-  upload_privacy: "unlisted"          # TEST: unlisted | normal: public
+  upload_privacy: "public"            # public | unlisted | private
 
 video:
-  target_minutes: 3                    # TEST: 3 | normal: 40 (<=45 cap)
+  target_minutes: 40                   # full length (<=45 cap)
   max_minutes: 45
   resolution: [1920, 1080]
   fps: 30
   visual_style: "hybrid"               # archival photos (Ken Burns) + stock B-roll
-  kenburns_zoom: 1.10                  # 10% slow zoom on photos
-  captions: false                      # TEST: false (whisper slow) | normal: true
+  kenburns_zoom: 1.10
+  captions: true                       # burn Hindi subtitles (non-fatal if it fails)
   intro_clip: "assets/branding/intro.mp4"   # optional
   outro_clip: "assets/branding/outro.mp4"   # optional
 
 voice:
-  # Microsoft Edge neural voices (free). hi-IN-MadhurNeural (M) | hi-IN-SwaraNeural (F)
-  primary: "hi-IN-MadhurNeural"
+  primary: "hi-IN-MadhurNeural"        # male | female: hi-IN-SwaraNeural
   rate: "+0%"
   pitch: "+0Hz"
 
 music:
-  volume_db: -22                       # quiet under voice
+  volume_db: -22
   sources: ["local"]                   # local = assets/music/*.mp3
   folder: "assets/music"
 
 media:
-  images_per_minute: 6                 # ~6 visuals/min
-  sources: ["wikimedia", "openverse", "pexels"]
-  stock_video_ratio: 0.35              # 35% B-roll, 65% photos
+  images_per_minute: 6
+  sources: ["wikimedia", "loc", "met", "archive", "openverse", "pexels"]
+  stock_video_ratio: 0.35
   safe_search: true
 
 reels:

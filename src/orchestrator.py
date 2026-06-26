@@ -27,11 +27,23 @@ def run_once(post_instagram=False):
         per_minute=CFG["media"]["images_per_minute"],
         video_ratio=CFG["media"]["stock_video_ratio"])
     track = music.get_track(workdir)
-    srt = subtitles.make_srt(audio, workdir) if CFG["video"]["captions"] else None
+
+    srt = None
+    if CFG["video"]["captions"]:
+        try:
+            srt = subtitles.make_srt(audio, workdir)   # non-fatal: never block upload
+        except Exception as e:
+            log.warning("captions skipped (non-fatal): %s", e)
+
     final = editor.build(assets, audio, track, srt, workdir)
 
-    thumb_bg = next((a["path"] for a in assets if a["type"] == "image"), None)
-    thumb = thumbnail.make(thumb_bg, script.get("thumbnail_text", topic["title"]), workdir) if thumb_bg else None
+    thumb = None
+    try:
+        thumb_bg = next((a["path"] for a in assets if a["type"] == "image"), None)
+        if thumb_bg:
+            thumb = thumbnail.make(thumb_bg, script.get("thumbnail_text", topic["title"]), workdir)
+    except Exception as e:
+        log.warning("thumbnail skipped (non-fatal): %s", e)
 
     vid = youtube_uploader.upload(
         final, script["yt_title"], script["yt_description"],
@@ -40,10 +52,14 @@ def run_once(post_instagram=False):
 
     # build reel for later local posting (saved next to outputs)
     if CFG["reels"]["enabled"]:
-        reel = reels_maker.make(final, script.get("reel_hook", topic["title"]), workdir)
-        if post_instagram:
-            import instagram_poster
-            instagram_poster.post_reel(reel, script.get("reel_hook", ""), f"https://youtu.be/{vid}")
+        try:
+            reel = reels_maker.make(final, script.get("reel_hook", topic["title"]), workdir)
+            if post_instagram:
+                import instagram_poster
+                instagram_poster.post_reel(reel, script.get("reel_hook", ""), f"https://youtu.be/{vid}")
+        except Exception as e:
+            log.warning("reel step skipped (non-fatal): %s", e)
+
     log.info("=== DONE: https://youtu.be/%s ===", vid)
     return vid
 

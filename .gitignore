@@ -14,3 +14,6 @@ __pycache__/
 *.png
 !assets/branding/*.png
 .DS_Store
+
+# allow background music to reach the cloud
+!assets/music/*.mp3
