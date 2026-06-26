@@ -31,7 +31,7 @@ music:
 
 media:
   images_per_minute: 6                 # ~6 visuals/min -> dynamic pacing
-  sources: ["wikimedia", "openverse", "pexels", "pixabay"]
+  sources: ["wikimedia", "openverse", "pexels"]
   stock_video_ratio: 0.35              # 35% B-roll clips, 65% photos (hybrid)
   safe_search: true
 

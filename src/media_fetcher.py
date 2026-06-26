@@ -1,5 +1,5 @@
 """Fetch free images + stock video for each scene keyword.
-Sources: Wikimedia Commons & Openverse (no key), Pexels & Pixabay (free key)."""
+Sources: Wikimedia Commons & Openverse (no key) + Pexels (free key)."""
 import requests, random, time
 from pathlib import Path
 from config import CFG, SECRETS
@@ -33,6 +33,22 @@ def _wikimedia_images(q, n):
         log.warning("wikimedia: %s", e)
     return out
 
+def _openverse_images(q, n):
+    """Openverse — huge free CC image search, NO API key needed."""
+    url = "https://api.openverse.org/v1/images/"
+    out = []
+    try:
+        r = requests.get(url, headers=HEAD,
+                         params={"q": q, "page_size": max(3, n), "mature": "false"},
+                         timeout=30).json()
+        for item in r.get("results", []):
+            link = item.get("url")
+            if link:
+                out.append(link)
+    except Exception as e:
+        log.warning("openverse: %s", e)
+    return out
+
 def _pexels(q, n, kind="photos"):
     key = SECRETS["PEXELS_API_KEY"]
     if not key: return []
@@ -50,19 +66,6 @@ def _pexels(q, n, kind="photos"):
     except Exception as e:
         log.warning("pexels: %s", e); return []
 
-def _pixabay(q, n, kind="photo"):
-    key = SECRETS["PIXABAY_API_KEY"]
-    if not key: return []
-    base = "https://pixabay.com/api/" if kind == "photo" else "https://pixabay.com/api/videos/"
-    try:
-        r = requests.get(base, params={"key": key, "q": q, "per_page": max(3, n),
-                                       "safesearch": "true"}, timeout=30).json()
-        if kind == "photo":
-            return [h["largeImageURL"] for h in r.get("hits", [])]
-        return [h["videos"]["large"]["url"] for h in r.get("hits", []) if h.get("videos")]
-    except Exception as e:
-        log.warning("pixabay: %s", e); return []
-
 def fetch_for_scenes(scenes, workdir: Path, per_minute=6, video_ratio=0.35):
     media_dir = workdir / "media"; media_dir.mkdir(parents=True, exist_ok=True)
     assets = []  # list of dicts {type, path, keyword}
@@ -70,11 +73,12 @@ def fetch_for_scenes(scenes, workdir: Path, per_minute=6, video_ratio=0.35):
         want_video = random.random() < video_ratio
         got = None
         if want_video:
-            for src in (_pexels(kw, 2, "videos") + _pixabay(kw, 2, "video")):
+            for src in _pexels(kw, 3, "videos"):
                 dest = media_dir / f"{idx:03d}_{slugify(kw)}.mp4"
                 if _save(src, dest): got = {"type": "video", "path": dest, "keyword": kw}; break
         if not got:
-            pool = _wikimedia_images(kw, 3) + _pexels(kw, 2) + _pixabay(kw, 2)
+            # Wikimedia (best for history, unlimited) -> Openverse (no key) -> Pexels
+            pool = _wikimedia_images(kw, 5) + _openverse_images(kw, 4) + _pexels(kw, 2)
             for src in pool:
                 dest = media_dir / f"{idx:03d}_{slugify(kw)}.jpg"
                 if _save(src, dest): got = {"type": "image", "path": dest, "keyword": kw}; break
