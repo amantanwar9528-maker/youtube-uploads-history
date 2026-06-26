@@ -1,29 +1,34 @@
 # ================= Itihaas Auto-Bot config (PRODUCTION) =================
 channel:
-  name: "Itihaas Ki Kahaniyan"        # change to your channel name
-  language: "hi"                       # Hindi narration
+  name: "Itihaas Ki Kahaniyan"
+  language: "hi"
   default_tags: ["history","itihaas","true story","history in hindi","documentary"]
-  upload_privacy: "public"            # public | unlisted | private
+  upload_privacy: "public"
 
 video:
-  target_minutes: 40                   # full length (<=45 cap)
+  target_minutes: 40
   max_minutes: 45
   resolution: [1920, 1080]
   fps: 30
-  visual_style: "hybrid"               # archival photos (Ken Burns) + stock B-roll
+  visual_style: "hybrid"
   kenburns_zoom: 1.10
-  captions: true                       # burn Hindi subtitles (non-fatal if it fails)
-  intro_clip: "assets/branding/intro.mp4"   # optional
-  outro_clip: "assets/branding/outro.mp4"   # optional
+  captions: true
+  intro_clip: "assets/branding/intro.mp4"
+  outro_clip: "assets/branding/outro.mp4"
+
+# fixed branded intro + outro (same in every video)
+intro:
+  enabled: true
+  voice_rate: "+18%"          # intro voice thoda fast (music ke according)
 
 voice:
-  primary: "hi-IN-MadhurNeural"        # male | female: hi-IN-SwaraNeural
+  primary: "hi-IN-MadhurNeural"   # male | female: hi-IN-SwaraNeural
   rate: "+0%"
   pitch: "+0Hz"
 
 music:
   volume_db: -22
-  sources: ["local"]                   # local = assets/music/*.mp3
+  sources: ["local"]
   folder: "assets/music"
 
 media:
@@ -38,7 +43,7 @@ reels:
   aspect: "9:16"
   hook_from: "intro"
 
-schedule:                              # IST (Asia/Kolkata)
+schedule:
   timezone: "Asia/Kolkata"
   slots: ["07:00", "13:00", "18:00"]
 

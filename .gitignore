@@ -22,3 +22,6 @@ __pycache__/
 !reels_to_post/
 !reels_to_post/*.mp4
 !reels_to_post/*.txt
+
+# fixed intro music
+!assets/branding/*.mp3

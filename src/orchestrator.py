@@ -1,12 +1,12 @@
 """End-to-end pipeline for ONE video. Designed for hands-off runs (cron / CI).
-   topic -> research -> script -> voice -> media -> edit -> realistic thumbnail
-   -> upload -> ad-reel saved to reels_to_post/ (local PC posts to Instagram)."""
+   topic -> research -> script -> voice -> media -> edit -> fixed intro+outro
+   -> realistic thumbnail -> upload -> ad-reel for Instagram."""
 import json, sys, shutil, traceback
 from datetime import datetime
 from pathlib import Path
 from config import CFG, ROOT, path
 from utils import get_logger
-import topic_picker, researcher, scriptwriter, voiceover, media_fetcher, music, editor, subtitles, thumbnail, youtube_uploader, reels_maker
+import topic_picker, researcher, scriptwriter, voiceover, media_fetcher, music, editor, subtitles, thumbnail, youtube_uploader, reels_maker, intro_outro
 
 log = get_logger("run")
 
@@ -41,11 +41,23 @@ def run_once(post_instagram=False):
     srt = None
     if CFG["video"]["captions"]:
         try:
-            srt = subtitles.make_srt(audio, workdir)   # non-fatal
+            srt = subtitles.make_srt(audio, workdir)
         except Exception as e:
             log.warning("captions skipped (non-fatal): %s", e)
 
-    final = editor.build(assets, audio, track, srt, workdir)
+    body = editor.build(assets, audio, track, srt, workdir)
+
+    # ---- fixed branded intro + outro (same every video) ----
+    final = body
+    if CFG.get("intro", {}).get("enabled", True):
+        try:
+            intro = intro_outro.build_intro(workdir)
+            outro = intro_outro.build_outro(workdir)
+            full = workdir / "final_full.mp4"
+            intro_outro.assemble(intro, body, outro, full)
+            final = full
+        except Exception as e:
+            log.warning("intro/outro skipped (non-fatal): %s", e)
 
     # ---- realistic AI thumbnail + HINGLISH heading ----
     thumb = None
