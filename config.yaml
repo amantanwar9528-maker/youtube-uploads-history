@@ -1,47 +1,47 @@
 # ================= Itihaas Auto-Bot config =================
+# >>> TEST MODE ON: chhota video, captions off, unlisted upload.
+# >>> Baad me wapas karna: target_minutes 40, captions true, privacy public.
 channel:
   name: "Itihaas Ki Kahaniyan"        # change to your channel name
   language: "hi"                       # Hindi narration
   default_tags: ["history","itihaas","true story","history in hindi","documentary"]
-  upload_privacy: "public"            # public | unlisted | private
+  upload_privacy: "unlisted"          # TEST: unlisted | normal: public
 
 video:
-  target_minutes: 40                  # aim 30-45 min; <=45 hard cap
+  target_minutes: 3                    # TEST: 3 | normal: 40 (<=45 cap)
   max_minutes: 45
   resolution: [1920, 1080]
   fps: 30
   visual_style: "hybrid"               # archival photos (Ken Burns) + stock B-roll
   kenburns_zoom: 1.10                  # 10% slow zoom on photos
-  captions: true                       # burn Hindi subtitles
-  intro_clip: "assets/branding/intro.mp4"   # optional, leave missing to skip
+  captions: false                      # TEST: false (whisper slow) | normal: true
+  intro_clip: "assets/branding/intro.mp4"   # optional
   outro_clip: "assets/branding/outro.mp4"   # optional
 
 voice:
-  # Microsoft Edge neural voices (free). Hindi options:
-  #   hi-IN-MadhurNeural (male)  |  hi-IN-SwaraNeural (female)
+  # Microsoft Edge neural voices (free). hi-IN-MadhurNeural (M) | hi-IN-SwaraNeural (F)
   primary: "hi-IN-MadhurNeural"
   rate: "+0%"
   pitch: "+0Hz"
 
 music:
-  # royalty-free background music, ducked under narration
   volume_db: -22                       # quiet under voice
-  sources: ["pixabay", "local"]        # local = assets/music/*.mp3
+  sources: ["local"]                   # local = assets/music/*.mp3
   folder: "assets/music"
 
 media:
-  images_per_minute: 6                 # ~6 visuals/min -> dynamic pacing
+  images_per_minute: 6                 # ~6 visuals/min
   sources: ["wikimedia", "openverse", "pexels"]
-  stock_video_ratio: 0.35              # 35% B-roll clips, 65% photos (hybrid)
+  stock_video_ratio: 0.35              # 35% B-roll, 65% photos
   safe_search: true
 
 reels:
   enabled: true
   length_seconds: 45
   aspect: "9:16"
-  hook_from: "intro"                   # build teaser from the opening hook
+  hook_from: "intro"
 
-schedule:                              # times are IST (Asia/Kolkata)
+schedule:                              # IST (Asia/Kolkata)
   timezone: "Asia/Kolkata"
   slots: ["07:00", "13:00", "18:00"]
 
