@@ -1,0 +1,36 @@
+name: Auto Video 0700 IST
+on:
+  schedule:
+    - cron: '30 1 * * *'   # 0700 IST daily
+  workflow_dispatch: {}            # manual run button
+concurrency:
+  group: video-pipeline           # never run two renders at once
+  cancel-in-progress: false
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 320
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Run pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python src/orchestrator.py
+      - name: Commit topic ledger
+        run: |
+          git config user.name "itihaas-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/used_topics.json data/topic_pool.json || true
+          git commit -m "ledger: $(date -u +%F-%T)" || echo "nothing to commit"
+          git push || echo "push skipped"

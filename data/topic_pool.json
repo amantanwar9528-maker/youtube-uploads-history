@@ -1,0 +1,15 @@
+{
+  "description": "Seed pool. The bot auto-generates new topics via Gemini when this runs low. Each must be tellable in <=45 min.",
+  "topics": [
+    {"title": "Jallianwala Bagh Hatyakand — Asli Kahani", "era": "1919", "region": "India"},
+    {"title": "Chauri Chaura Kaand aur Andolan ka Ant", "era": "1922", "region": "India"},
+    {"title": "Razakar aur Hyderabad ka Bharat me Vilay", "era": "1948", "region": "India"},
+    {"title": "Koh-i-Noor Heere ka Safar", "era": "1300s-1800s", "region": "India/UK"},
+    {"title": "Pompeii — Ek Shehar jo Raakh me Dafan Hua", "era": "79 AD", "region": "Rome"},
+    {"title": "Titanic — Dooobne ki Asli Wajah", "era": "1912", "region": "Atlantic"},
+    {"title": "Chernobyl — Vibhishika ke Peeche ka Sach", "era": "1986", "region": "USSR"},
+    {"title": "Bhagat Singh ke Aakhri 24 Ghante", "era": "1931", "region": "India"},
+    {"title": "Battle of Haldighati — Maharana Pratap", "era": "1576", "region": "India"},
+    {"title": "Berlin Wall — Uthna aur Girna", "era": "1961-1989", "region": "Germany"}
+  ]
+}

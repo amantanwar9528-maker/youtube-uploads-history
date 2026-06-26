@@ -1,0 +1,31 @@
+# ===== Itihaas Auto-Bot — free dependencies =====
+# Scripting / research (free Gemini API tier)
+google-generativeai>=0.8.0
+wikipedia-api>=0.6.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# Human-like Hindi voice (Microsoft Edge neural TTS — 100% free, no key)
+edge-tts>=6.1.10
+
+# Video / audio editing
+moviepy==1.0.3
+imageio-ffmpeg>=0.4.9
+Pillow>=10.2.0
+numpy>=1.26.0
+
+# Subtitles
+faster-whisper>=1.0.0   # optional: auto-align captions (free, runs on CPU)
+
+# YouTube upload (free YouTube Data API v3)
+google-api-python-client>=2.0.0
+google-auth-oauthlib>=1.2.0
+google-auth-httplib2>=0.2.0
+
+# Instagram Reels (login by username/password, NO API key — run locally)
+instagrapi>=2.1.0
+
+# Misc
+PyYAML>=6.0
+python-dotenv>=1.0.0
+tenacity>=8.2.0
