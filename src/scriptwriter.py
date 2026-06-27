@@ -47,6 +47,7 @@ Sirf JSON do (no extra text):
 "yt_description": "<150-word Hindi description with 5 hashtags>",
 "thumbnail_heading": "<2 to 5 word CATCHY thumbnail heading in ENGLISH ONLY (translate topic to English), e.g. 'Jallianwala Bagh Massacre', 'The Sinking of Titanic', 'Fall of Berlin Wall'>",
 "reel_hook": "<one-line Hindi hook for Instagram reel>",
+"music_mood": "<1 to 3 ENGLISH words for background music mood of this topic, e.g. epic dramatic, tense suspense, somber emotional, triumphant heroic>",
 "thumbnail_prompt": "<short ENGLISH visual scene description of this historical topic for a photorealistic AI image; describe place/people/era/mood; NO text/words in the image>"}}"""
     try:
         raw = gemini_client.ask(prompt, temperature=0.7)
@@ -55,4 +56,4 @@ Sirf JSON do (no extra text):
         log.warning("meta gen failed: %s", e)
         return {"yt_title": topic_title, "yt_description": topic_title,
                 "thumbnail_heading": topic_title, "reel_hook": topic_title,
-                "thumbnail_prompt": topic_title}
+                "thumbnail_prompt": topic_title, "music_mood": "epic cinematic"}

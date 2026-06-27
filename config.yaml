@@ -28,7 +28,7 @@ voice:
 
 music:
   volume_db: -22
-  sources: ["local"]
+  sources: ["openverse", "local"]   # openverse=free mood-based music (no key)
   folder: "assets/music"
 
 media:

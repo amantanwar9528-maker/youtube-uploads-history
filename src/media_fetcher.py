@@ -1,7 +1,7 @@
 """Fetch free images + stock video for each scene keyword.
 History-first, copyright-safe sources (tried in order, stop at first hit):
   Wikimedia Commons -> Library of Congress -> The Met -> Internet Archive
-  -> Openverse -> Pexels.  Video: Pexels.
+  -> Openverse -> Pexels -> Pixabay.  Video: Pexels + Pixabay.
 If a scene finds nothing, a clean placeholder slide is generated so the
 video ALWAYS renders."""
 import requests, random, time, colorsys
@@ -128,6 +128,25 @@ def _pexels(q, n, kind="photos"):
     except Exception as e:
         log.warning("pexels: %s", e); return []
 
+def _pixabay(q, n, kind="photo"):
+    key = SECRETS["PIXABAY_API_KEY"]
+    if not key: return []
+    base = "https://pixabay.com/api/" if kind == "photo" else "https://pixabay.com/api/videos/"
+    try:
+        r = requests.get(base, params={"key": key, "q": _clean_query(q),
+                                       "per_page": max(3, n), "safesearch": "true"},
+                         timeout=30).json()
+        if kind == "photo":
+            return [h["largeImageURL"] for h in r.get("hits", []) if h.get("largeImageURL")]
+        out = []
+        for h in r.get("hits", []):
+            v = (h.get("videos") or {})
+            link = (v.get("large") or v.get("medium") or {}).get("url")
+            if link: out.append(link)
+        return out
+    except Exception as e:
+        log.warning("pixabay: %s", e); return []
+
 # history-first order; stop at first source that yields a downloadable image
 IMAGE_SOURCES = [
     ("wikimedia", _wikimedia_images),
@@ -136,6 +155,7 @@ IMAGE_SOURCES = [
     ("archive",   _archive_images),
     ("openverse", _openverse_images),
     ("pexels",    lambda kw, n: _pexels(kw, n, "photos")),
+    ("pixabay",   lambda kw, n: _pixabay(kw, n, "photo")),
 ]
 
 def _placeholder(kw, dest, idx):
@@ -173,7 +193,7 @@ def fetch_for_scenes(scenes, workdir: Path, per_minute=6, video_ratio=0.35):
     for idx, kw in enumerate(scenes):
         got = None
         if random.random() < video_ratio:
-            for src in _pexels(kw, 3, "videos"):
+            for src in _pexels(kw, 3, "videos") + _pixabay(kw, 2, "video"):
                 dest = media_dir / f"{idx:03d}_{slugify(kw)}.mp4"
                 if _save(src, dest): got = {"type": "video", "path": dest, "keyword": kw}; break
         if not got:

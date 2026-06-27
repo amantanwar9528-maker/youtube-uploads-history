@@ -36,7 +36,7 @@ def run_once(post_instagram=False):
         script["scenes"], workdir,
         per_minute=CFG["media"]["images_per_minute"],
         video_ratio=CFG["media"]["stock_video_ratio"])
-    track = music.get_track(workdir)
+    track = music.get_track(workdir, script.get("music_mood", "epic cinematic"))
 
     srt = None
     if CFG["video"]["captions"]:
