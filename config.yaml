@@ -12,7 +12,7 @@ video:
   fps: 30
   visual_style: "hybrid"
   kenburns_zoom: 1.10
-  captions: true
+  captions: false
   intro_clip: "assets/branding/intro.mp4"
   outro_clip: "assets/branding/outro.mp4"
 
