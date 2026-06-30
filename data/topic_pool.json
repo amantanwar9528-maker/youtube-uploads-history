@@ -1,15 +1,255 @@
 {
   "description": "Seed pool. The bot auto-generates new topics via Gemini when this runs low. Each must be tellable in <=45 min.",
   "topics": [
-    {"title": "Jallianwala Bagh Hatyakand — Asli Kahani", "era": "1919", "region": "India"},
-    {"title": "Chauri Chaura Kaand aur Andolan ka Ant", "era": "1922", "region": "India"},
-    {"title": "Razakar aur Hyderabad ka Bharat me Vilay", "era": "1948", "region": "India"},
-    {"title": "Koh-i-Noor Heere ka Safar", "era": "1300s-1800s", "region": "India/UK"},
-    {"title": "Pompeii — Ek Shehar jo Raakh me Dafan Hua", "era": "79 AD", "region": "Rome"},
-    {"title": "Titanic — Dooobne ki Asli Wajah", "era": "1912", "region": "Atlantic"},
-    {"title": "Chernobyl — Vibhishika ke Peeche ka Sach", "era": "1986", "region": "USSR"},
-    {"title": "Bhagat Singh ke Aakhri 24 Ghante", "era": "1931", "region": "India"},
-    {"title": "Battle of Haldighati — Maharana Pratap", "era": "1576", "region": "India"},
-    {"title": "Berlin Wall — Uthna aur Girna", "era": "1961-1989", "region": "Germany"}
+    {
+      "title": "Jallianwala Bagh Hatyakand — Asli Kahani",
+      "era": "1919",
+      "region": "India"
+    },
+    {
+      "title": "Chauri Chaura Kaand aur Andolan ka Ant",
+      "era": "1922",
+      "region": "India"
+    },
+    {
+      "title": "Razakar aur Hyderabad ka Bharat me Vilay",
+      "era": "1948",
+      "region": "India"
+    },
+    {
+      "title": "Koh-i-Noor Heere ka Safar",
+      "era": "1300s-1800s",
+      "region": "India/UK"
+    },
+    {
+      "title": "Pompeii — Ek Shehar jo Raakh me Dafan Hua",
+      "era": "79 AD",
+      "region": "Rome"
+    },
+    {
+      "title": "Titanic — Dooobne ki Asli Wajah",
+      "era": "1912",
+      "region": "Atlantic"
+    },
+    {
+      "title": "Chernobyl — Vibhishika ke Peeche ka Sach",
+      "era": "1986",
+      "region": "USSR"
+    },
+    {
+      "title": "Bhagat Singh ke Aakhri 24 Ghante",
+      "era": "1931",
+      "region": "India"
+    },
+    {
+      "title": "Battle of Haldighati — Maharana Pratap",
+      "era": "1576",
+      "region": "India"
+    },
+    {
+      "title": "Berlin Wall — Uthna aur Girna",
+      "era": "1961-1989",
+      "region": "Germany"
+    },
+    {
+      "title": "Sepoy Mutiny 1857 — Pehli Jung-e-Azadi",
+      "era": "1857",
+      "region": "India"
+    },
+    {
+      "title": "Rani Lakshmibai — Jhansi ka Aakhri Yuddh",
+      "era": "1858",
+      "region": "India"
+    },
+    {
+      "title": "Subhas Chandra Bose aur INA ka Raaz",
+      "era": "1940s",
+      "region": "India"
+    },
+    {
+      "title": "Partition 1947 — Batwaare ki Raat",
+      "era": "1947",
+      "region": "India"
+    },
+    {
+      "title": "Sardar Patel — 562 Riyasaton ka Ekikaran",
+      "era": "1947-49",
+      "region": "India"
+    },
+    {
+      "title": "Chandragupta Maurya aur Chanakya ki Niti",
+      "era": "300 BC",
+      "region": "India"
+    },
+    {
+      "title": "Ashoka aur Kalinga Yuddh ka Badlav",
+      "era": "261 BC",
+      "region": "India"
+    },
+    {
+      "title": "Tipu Sultan — Mysore ka Sher",
+      "era": "1780s",
+      "region": "India"
+    },
+    {
+      "title": "Prithviraj Chauhan aur Mohammad Ghori",
+      "era": "1192",
+      "region": "India"
+    },
+    {
+      "title": "Nalanda — Jalti Hui Gyaan ki Nagari",
+      "era": "1193",
+      "region": "India"
+    },
+    {
+      "title": "Somnath Mandir — Baar Baar Toota aur Bana",
+      "era": "1024",
+      "region": "India"
+    },
+    {
+      "title": "Udham Singh — 21 Saal Baad Liya Badla",
+      "era": "1940",
+      "region": "India/UK"
+    },
+    {
+      "title": "Bhopal Gas Trasdi — Us Raat Kya Hua",
+      "era": "1984",
+      "region": "India"
+    },
+    {
+      "title": "Kargil Yuddh 1999 — Choti par Jeet",
+      "era": "1999",
+      "region": "India"
+    },
+    {
+      "title": "Vijayanagar Samrajya — Hampi ka Uday aur Ast",
+      "era": "1336-1646",
+      "region": "India"
+    },
+    {
+      "title": "Mohenjo-daro — Sindhu Ghati ka Rahasya",
+      "era": "2500 BC",
+      "region": "India"
+    },
+    {
+      "title": "Taj Mahal — Pyaar ya Siyasat?",
+      "era": "1632",
+      "region": "India"
+    },
+    {
+      "title": "Mangal Pandey — Vidroh ki Chingari",
+      "era": "1857",
+      "region": "India"
+    },
+    {
+      "title": "Chhatrapati Shivaji aur Surat ki Loot",
+      "era": "1664",
+      "region": "India"
+    },
+    {
+      "title": "Lal Bahadur Shastri ki Rahasyamayi Maut",
+      "era": "1966",
+      "region": "India/USSR"
+    },
+    {
+      "title": "World War 1 — Jisne Duniya Badal Di",
+      "era": "1914-18",
+      "region": "World"
+    },
+    {
+      "title": "World War 2 — Hitler ke Patan ki Kahani",
+      "era": "1939-45",
+      "region": "World"
+    },
+    {
+      "title": "Hiroshima Nagasaki — Parmanu Bomb ka Kahar",
+      "era": "1945",
+      "region": "Japan"
+    },
+    {
+      "title": "French Revolution — Raja se Janta tak",
+      "era": "1789",
+      "region": "France"
+    },
+    {
+      "title": "Roman Empire ka Patan",
+      "era": "476 AD",
+      "region": "Rome"
+    },
+    {
+      "title": "Egypt ke Pyramids — Kaise Bane?",
+      "era": "2560 BC",
+      "region": "Egypt"
+    },
+    {
+      "title": "Cleopatra — Misr ki Aakhri Rani",
+      "era": "30 BC",
+      "region": "Egypt"
+    },
+    {
+      "title": "Genghis Khan — Mongol Toofan",
+      "era": "1206",
+      "region": "Mongolia"
+    },
+    {
+      "title": "Black Death — Aadhi Duniya Khaane Wali Mahamari",
+      "era": "1347",
+      "region": "Europe"
+    },
+    {
+      "title": "Cuban Missile Crisis — Jung ke Kagaar par",
+      "era": "1962",
+      "region": "USA/USSR"
+    },
+    {
+      "title": "Cold War — USA vs USSR ki Chhupi Jung",
+      "era": "1947-91",
+      "region": "World"
+    },
+    {
+      "title": "9/11 — Us Din Kya Hua",
+      "era": "2001",
+      "region": "USA"
+    },
+    {
+      "title": "Great Depression 1929 — Aarthik Patan",
+      "era": "1929",
+      "region": "USA"
+    },
+    {
+      "title": "Apollo 11 — Chand par Pehla Kadam",
+      "era": "1969",
+      "region": "USA"
+    },
+    {
+      "title": "Berlin Olympics 1936 — Hitler aur Jesse Owens",
+      "era": "1936",
+      "region": "Germany"
+    },
+    {
+      "title": "Vietnam War — Superpower ki Haar",
+      "era": "1955-75",
+      "region": "Vietnam"
+    },
+    {
+      "title": "Spanish Flu 1918 — Bhooli Hui Mahamari",
+      "era": "1918",
+      "region": "World"
+    },
+    {
+      "title": "Great Fire of London",
+      "era": "1666",
+      "region": "UK"
+    },
+    {
+      "title": "Mughal Empire ka Patan — Aurangzeb ke Baad",
+      "era": "1707",
+      "region": "India"
+    },
+    {
+      "title": "Anne Frank aur Holocaust ki Sachai",
+      "era": "1944",
+      "region": "Europe"
+    }
   ]
 }
