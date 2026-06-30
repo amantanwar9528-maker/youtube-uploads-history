@@ -18,15 +18,18 @@ def _chunks(text, size=2500):
     if buf.strip(): out.append(buf)
     return out
 
-async def _synth(text, out_path, voice, rate, pitch):
-    comm = edge_tts.Communicate(text, voice=voice, rate=rate, pitch=pitch)
+async def _synth(text, out_path, voice, rate, pitch, volume):
+    comm = edge_tts.Communicate(text, voice=voice, rate=rate, pitch=pitch, volume=volume)
     await comm.save(str(out_path))
 
-def synth_text(text, out_path, rate=None, pitch=None):
+def _vol():
+    return CFG["voice"].get("volume", "+0%")
+
+def synth_text(text, out_path, rate=None, pitch=None, volume=None):
     """Synthesize a single short text (intro/outro) with optional custom speed."""
     v = CFG["voice"]
     asyncio.run(_synth(text, Path(out_path), v["primary"],
-                       rate or v["rate"], pitch or v["pitch"]))
+                       rate or v["rate"], pitch or v["pitch"], volume or _vol()))
     return Path(out_path)
 
 def narrate(narration: str, workdir: Path) -> Path:
@@ -36,7 +39,7 @@ def narrate(narration: str, workdir: Path) -> Path:
     files = []
     for i, ch in enumerate(chunks):
         out = parts_dir / f"part_{i:03d}.mp3"
-        asyncio.run(_synth(ch, out, v["primary"], v["rate"], v["pitch"]))
+        asyncio.run(_synth(ch, out, v["primary"], v["rate"], v["pitch"], _vol()))
         files.append(out)
         log.info("voiced part %d/%d", i + 1, len(chunks))
     listfile = parts_dir / "list.txt"

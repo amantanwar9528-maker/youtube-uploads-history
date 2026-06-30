@@ -22,6 +22,7 @@ Research brief:
 
 Ek YouTube documentary script likh, Hindi me, approx {words} words ({CFG['video']['target_minutes']} min).
 Rules:
+- DELIVERY STYLE (bahut zaroori): ek confident, energetic anchor ki tarah likh. Chhote, punchy vaakya. Beech-beech me dramatic pause ke liye '...' daal. Rhetorical sawaal daal jaise 'socho zara...', 'lekin sach kuch aur tha'. Emphasis ke liye repetition. Aisa tone ki sunne wale ko maza aaye aur wo bandha rahe — boring/flat bilkul nahi.
 - Strong HOOK opening (pehle 30 sec me curiosity).
 - Pure storytelling flow: build-up -> conflict -> climax -> the REAL reason -> reflection.
 - Har 2-3 line ke baad ek visual cue daal is format me: [[scene: <english keywords for image/video search>]]
