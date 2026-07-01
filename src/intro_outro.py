@@ -137,7 +137,7 @@ def build_intro(workdir, assets=None):
         voiceover.synth_text(p["voice"], v, rate=rate); voices.append(v)
         d = max(2.0, _dur(v)) + (0.5 if i == 1 else 0.4)
         clips.append(_kenburns(p["bg"], d, workdir / f"intro_c{i}.mp4"))
-    intro_voice = _concat_copy(voices, workdir / "intro_voice.mp3")
+    intro_voice = voiceover.concat_audio(voices, workdir / "intro_voice.mp3")
     intro_silent = _concat_copy(clips, workdir / "intro_silent.mp4")
     out = workdir / "intro.mp4"
     _mix(intro_silent, intro_voice, music, out, music_db=-5)
