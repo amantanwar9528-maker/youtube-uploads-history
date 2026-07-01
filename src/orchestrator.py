@@ -1,23 +1,14 @@
-"""End-to-end pipeline for ONE video. Designed for hands-off runs (cron / CI).
-   topic -> research -> script -> voice -> media -> edit -> fixed intro+outro
-   -> realistic thumbnail -> upload -> ad-reel for Instagram."""
+"""End-to-end pipeline for ONE video (hands-off, cron/CI).
+topic -> research -> script -> voice -> media -> edit -> intro+outro
+-> Ghibli thumbnail -> upload -> HOOK/BUILD/CLIFFHANGER short (YT Short + IG reel)."""
 import json, sys, shutil, traceback
 from datetime import datetime
 from pathlib import Path
 from config import CFG, ROOT, path
 from utils import get_logger
-import topic_picker, researcher, scriptwriter, voiceover, media_fetcher, music, editor, subtitles, thumbnail, youtube_uploader, reels_maker, intro_outro
+import topic_picker, researcher, scriptwriter, voiceover, media_fetcher, music, editor, subtitles, thumbnail, youtube_uploader, intro_outro, shorts
 
 log = get_logger("run")
-
-def _ig_caption(script, channel, vid):
-    hook = script.get("reel_hook") or script.get("yt_title", "")
-    return (
-        f"{hook}\n\n"
-        f"Poori kahani (full video) YouTube par dekhein! Link bio mein.\n"
-        f"▶ {channel} ko abhi Subscribe karein.\n\n"
-        f"#history #itihaas #historyinhindi #truestory #facts #reels #explore #bharat"
-    )
 
 def run_once(post_instagram=False):
     topic = topic_picker.next_topic()
@@ -47,11 +38,11 @@ def run_once(post_instagram=False):
 
     body = editor.build(assets, audio, track, srt, workdir)
 
-    # ---- fixed branded intro + outro (same every video) ----
+    # ---- fixed branded intro + outro ----
     final = body
     if CFG.get("intro", {}).get("enabled", True):
         try:
-            intro = intro_outro.build_intro(workdir)
+            intro = intro_outro.build_intro(workdir, assets)
             outro = intro_outro.build_outro(workdir)
             full = workdir / "final_full.mp4"
             intro_outro.assemble(intro, body, outro, full)
@@ -59,13 +50,12 @@ def run_once(post_instagram=False):
         except Exception as e:
             log.warning("intro/outro skipped (non-fatal): %s", e)
 
-    # ---- realistic AI thumbnail + HINGLISH heading ----
+    # ---- realistic/Ghibli AI thumbnail (no text) ----
     thumb = None
     try:
-        heading = script.get("thumbnail_heading") or topic["title"].split("—")[0].split(":")[0].strip()
         ai_prompt = script.get("thumbnail_prompt") or topic["title"]
         fallback_bg = next((a["path"] for a in assets if a["type"] == "image"), None)
-        thumb = thumbnail.make(heading, ai_prompt, workdir, fallback_bg)
+        thumb = thumbnail.make(script.get("thumbnail_heading", ""), ai_prompt, workdir, fallback_bg)
     except Exception as e:
         log.warning("thumbnail skipped (non-fatal): %s", e)
 
@@ -74,21 +64,36 @@ def run_once(post_instagram=False):
         CFG["channel"]["default_tags"], thumb)
     topic_picker.mark_used(topic, vid)
 
-    # ---- ad-reel -> reels_to_post/ (PC posts to Instagram later) ----
+    # ---- short-form: YouTube Short + Instagram Reel ----
     if CFG["reels"]["enabled"]:
         try:
-            reel = reels_maker.make(final, script.get("reel_hook", topic["title"]), workdir)
+            short = shorts.write_short_script(topic["title"], script["narration"][:3500])
+            short_path = shorts.build_short(short, workdir, main_url=f"https://youtu.be/{vid}")
+            hashtags = " ".join(short.get("hashtags", []))
+            s_desc = f"{short.get('description','')}\n\nFull video: https://youtu.be/{vid}\n{hashtags}"
+
+            # upload as a YouTube Short
+            try:
+                s_title = (short.get("title") or topic["title"])[:38] + " #Shorts"
+                s_tags = CFG["channel"]["default_tags"] + ["shorts", "reels", "history shorts"]
+                svid = youtube_uploader.upload(short_path, s_title, s_desc, s_tags)
+                log.info("YouTube Short uploaded: https://youtu.be/%s", svid)
+            except Exception as e:
+                log.warning("shorts YT upload failed (non-fatal): %s", e)
+
+            # queue for Instagram Reels (local PC posts it)
             outbox = ROOT / "reels_to_post"; outbox.mkdir(exist_ok=True)
             name = f"{workdir.name}_{vid}"
-            shutil.copy(reel, outbox / f"{name}.mp4")
-            (outbox / f"{name}.txt").write_text(
-                _ig_caption(script, CFG["channel"]["name"], vid), encoding="utf-8")
-            log.info("reel queued for Instagram: %s.mp4", name)
+            shutil.copy(short_path, outbox / f"{name}.mp4")
+            ig_cap = f"{short.get('description','')}\nPoori kahani YouTube par! (link in bio)\n{hashtags}"
+            (outbox / f"{name}.txt").write_text(ig_cap, encoding="utf-8")
+            log.info("short queued for Instagram: %s.mp4", name)
+
             if post_instagram:
                 import instagram_poster
-                instagram_poster.post_reel(reel, script.get("reel_hook", ""), f"https://youtu.be/{vid}")
+                instagram_poster.post_reel(short_path, ig_cap)
         except Exception as e:
-            log.warning("reel step skipped (non-fatal): %s", e)
+            log.warning("short-form step skipped (non-fatal): %s", e)
 
     log.info("=== DONE: https://youtu.be/%s ===", vid)
     return vid
