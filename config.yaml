@@ -23,7 +23,7 @@ intro:
 
 voice:
   primary: "hi-IN-MadhurNeural"   # male | female: hi-IN-SwaraNeural
-  rate: "+12%"
+  rate: "+15%"
   pitch: "+0Hz"
   volume: "+18%"   # zyada presence/energy = confident
 
