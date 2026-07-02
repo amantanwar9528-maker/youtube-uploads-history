@@ -50,13 +50,21 @@ def _synth_valid(text, out_path, voice, rate, pitch, volume, tries=3):
     return False
 
 def concat_audio(files, out):
-    """Concatenate mp3s by RE-ENCODING (tolerates header quirks)."""
-    lst = Path(out).parent / (Path(out).stem + "_alist.txt")
-    # absolute paths so files in sub-folders (voice_parts/) resolve correctly
-    lst.write_text("\n".join(f"file '{Path(f).resolve()}'" for f in files), encoding="utf-8")
-    run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
-         "-c:a", "libmp3lame", "-q:a", "2", str(out)], log)
-    return Path(out)
+    """Concatenate mp3s via the concat FILTER with direct inputs (no list file,
+    so there is zero relative-path ambiguity; also re-encodes = header-safe)."""
+    files = [Path(f) for f in files]
+    out = Path(out)
+    if len(files) == 1:
+        run(["ffmpeg", "-y", "-i", str(files[0]), "-c:a", "libmp3lame", "-q:a", "2", str(out)], log)
+        return out
+    cmd = ["ffmpeg", "-y"]
+    for f in files:
+        cmd += ["-i", str(f)]
+    n = len(files)
+    fc = "".join(f"[{i}:a]" for i in range(n)) + f"concat=n={n}:v=0:a=1[a]"
+    cmd += ["-filter_complex", fc, "-map", "[a]", "-c:a", "libmp3lame", "-q:a", "2", str(out)]
+    run(cmd, log)
+    return out
 
 def synth_text(text, out_path, rate=None, pitch=None, volume=None):
     """Single short clip (intro/outro/shorts) with retries."""
