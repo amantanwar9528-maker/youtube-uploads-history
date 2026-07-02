@@ -52,7 +52,8 @@ def _synth_valid(text, out_path, voice, rate, pitch, volume, tries=3):
 def concat_audio(files, out):
     """Concatenate mp3s by RE-ENCODING (tolerates header quirks)."""
     lst = Path(out).parent / (Path(out).stem + "_alist.txt")
-    lst.write_text("\n".join(f"file '{Path(f).name}'" for f in files), encoding="utf-8")
+    # absolute paths so files in sub-folders (voice_parts/) resolve correctly
+    lst.write_text("\n".join(f"file '{Path(f).resolve()}'" for f in files), encoding="utf-8")
     run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
          "-c:a", "libmp3lame", "-q:a", "2", str(out)], log)
     return Path(out)
